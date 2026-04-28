@@ -86,9 +86,9 @@ Twig テンプレートを開いて右クリック → **EC-CUBE: Open Related C
 
 ---
 
-## リポジトリ
+## マーケットプレイス
 
-- GitHub: https://github.com/TakashiHishiki/ec-cube-controller-twig-navigator
+- VSCodeマーケットプレイス(https://marketplace.visualstudio.com/items?itemName=colscenery.ec-cube-controller-twig-navigator)
 
 ---
 
