@@ -1,104 +1,97 @@
 # EC-CUBE Controller Twig Navigator
 
-[![Version](https://img.shields.io/visual-studio-marketplace/v/colscenery.ec-cube-controller-twig-navigator?label=Marketplace)](https://marketplace.visualstudio.com/items?itemName=colscenery.ec-cube-controller-twig-navigator)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/colscenery.ec-cube-controller-twig-navigator)](https://marketplace.visualstudio.com/items?itemName=colscenery.ec-cube-controller-twig-navigator)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE.txt)
-
-EC-CUBE の PHP コントローラーアクションと Twig テンプレートを、エディターの右クリックメニューから素早く行き来できる Visual Studio Code 拡張機能です。
+EC-CUBE Controller Twig Navigator は、PHP コントローラーのアクションと Twig テンプレートをエディター上で行き来できる Visual Studio Code 拡張機能です。
 
 ---
 
-## Features
+## 機能
 
-- PHP コントローラーファイルを開いた状態で右クリック → 対応する Twig テンプレートへジャンプ
-- Twig テンプレートを開いた状態で右クリック → 対応するコントローラーアクションへジャンプ
-- Twig → コントローラーの検索順: `/app/Customize/Controller/` を優先し、なければ `/src/Eccube/Controller/` へフォールバック
-- コントローラー → Twig の検索順: `/app/template/<設定したディレクトリ>/` を優先し、なければ `/app/template/default/` へフォールバック
-- `render()` / `renderView()` / `@Template(...)` / `#[Template(...)]` の各パターンに対応
-- 複数の候補が見つかった場合は Quick Pick リストで選択できる
-- `.vscode/settings.json` が存在しない場合は自動作成し、VS Code の通知でお知らせ
-
----
-
-## Installation
-
-VS Code の Quick Open（`Ctrl+P` / `Cmd+P`）を開き、以下を貼り付けて Enter を押します。
-
-```
-ext install colscenery.ec-cube-controller-twig-navigator
-```
-
-または [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=colscenery.ec-cube-controller-twig-navigator) から直接インストールできます。
+- 右クリックメニューから、現在開いている EC-CUBE コントローラーのアクションに対応する Twig テンプレートを開く。
+- 右クリックメニューから、現在開いている Twig テンプレートをレンダリングしているコントローラーのアクションを開く。
+- Twig → コントローラーの検索時は `/app/Customize/Controller/` を優先し、見つからない場合は `/src/Eccube/Controller/` にフォールバックする。
+- コントローラー → Twig の検索時は `/app/template/<テーマ名>/` を自動検出して優先し、見つからない場合は `/app/template/default/` にフォールバックする。
+- `render()`、`renderView()`、`@Template(...)`、`#[Template(...)]` などの一般的なパターンに対応。
+- 複数の候補が見つかった場合や自動解決できない場合は、Quick Pick リストを表示して手動で選択できる。
 
 ---
 
-## Workspace Setting
+## テンプレートディレクトリの自動検出
 
-`.vscode/settings.json` が存在しない場合、拡張機能が自動的にサンプル付きで作成し、VS Code の通知でお知らせします。
+`/app/template/` 配下にあるカスタムテーマのディレクトリ名は、設定ファイルへの記述なしに自動で検出されます。
 
-使用するテンプレートディレクトリ名をワークスペースの `.vscode/settings.json` に設定してください。
+**検出ロジック（優先順位）：**
 
-```json
-{
-  "ecCubeNavigator.templateDirectoryName": "custom_theme"
-}
-```
+1. `/app/template/` 配下を自動スキャンし、`default` 以外のディレクトリを収集する。
+   - カスタムディレクトリが **1つだけ** の場合 → 自動で使用（操作不要）。
+   - **複数** ある場合 → Quick Pick で選択できる。
+2. テンプレートの検索順序：
+   - `/app/template/<検出されたテーマ名>/`
+   - `/app/template/default/`
+   - 上記どちらも存在しない場合のみ `/src/Eccube/Resource/template/default/`
 
-### テンプレートの検索順
-
-| 優先度 | パス |
-|:---:|---|
-| 1 | `/app/template/<ecCubeNavigator.templateDirectoryName>/` （設定ディレクトリが存在する場合） |
-| 2 | `/app/template/default/` （存在する場合） |
-| 3 | `/src/Eccube/Resource/template/default/` （上記どちらも存在しない場合のみ） |
+コマンドパレット（`Ctrl+Shift+P`）から **EC-CUBE: Select Template Directory** を実行すると、テーマディレクトリを一覧から選択して設定に保存することもできます。
 
 ---
 
-## How It Works
+## コンテキストメニュー（右クリック）
 
-### コントローラー → Twig
+| 開いているファイル | メニュー項目 | 動作 |
+|---|---|---|
+| `.php` コントローラー | EC-CUBE: Open Related Twig Template | 対応する Twig テンプレートへジャンプ |
+| `.twig` テンプレート | EC-CUBE: Open Related Controller Action | レンダリングしているコントローラーのアクションへジャンプ |
 
-PHP コントローラーファイルを開き、アクションメソッドの中にカーソルを置いて右クリック →  
-**`EC-CUBE: Open Related Twig Template`** を選択します。
-
-対応するコントローラーの記述パターン:
-
-```php
-$this->render('Product/detail.twig', [...])
-$this->renderView('Product/detail.twig', [...])
-
-/**
- * @Template("Product/detail.twig")
- */
-
-#[Template('Product/detail.twig')]
-```
-
-コントローラーファイル内の `@Template("Section/action.twig")` の文字列を直接右クリックしてジャンプすることもできます。
+エクスプローラーパネルで `.php` / `.twig` ファイルを右クリックした場合も同様に使用できます。
 
 ---
 
-### Twig → コントローラー
+## 使い方
 
-Twig テンプレートを開いて右クリック →  
-**`EC-CUBE: Open Related Controller Action`** を選択します。
+### コントローラーのアクション → Twig
 
-コントローラーの検索順:
+PHP コントローラーファイルを開き、アクション内にカーソルを置いて右クリック → **EC-CUBE: Open Related Twig Template** を選択します。
 
-1. `/app/Customize/Controller/` が存在する場合はそちらを優先
-2. カスタマイズコントローラーに一致がなければ `/src/Eccube/Controller/` を検索
+対応しているコントローラーのパターン：
 
-複数の候補が見つかった場合や自動マッチができなかった場合は、Quick Pick リストが開いて手動で選択できます。Quick Pick の結果は関連度順にソートされます。
+- `$this->render('Product/detail.twig', ...)`
+- `$this->renderView('Product/detail.twig', ...)`
+- `@Template("Product/detail.twig")`
+- `#[Template('Product/detail.twig')]`
+
+コントローラーファイル内の `@Template("Section/action.twig")` 記述を直接右クリックして、そのテンプレートへジャンプすることもできます。
+
+### Twig → コントローラーのアクション
+
+Twig テンプレートを開いて右クリック → **EC-CUBE: Open Related Controller Action** を選択します。
+
+コントローラーの検索順序：
+
+1. `/app/Customize/Controller/` — ディレクトリが存在し、マッチが見つかった場合はコアディレクトリを検索しない。
+2. `/src/Eccube/Controller/`
+
+複数の候補が見つかった場合、または自動解決できない場合は Quick Pick リストを表示します。Quick Pick の結果は関連度順に並び替えられます。たとえば `guide` アクションは名前に `guide` を含む Twig ファイルを優先し、`@Template("Forgot/index.twig")` は `index` より `Forgot` を優先します。
 
 ---
 
-## Notes
+## 動作要件
 
-- テンプレートのマッチングは、EC-CUBE の各ディレクトリ内の Twig パスのサフィックスを正規化して比較しています
-- コントローラーのソース内に Twig パスの文字列が含まれないカスタムレンダリングフローは対応していません
+- VS Code `^1.90.0`
+- EC-CUBE 4 の標準的なプロジェクト構成（`app/template/` および `src/Eccube/Controller/` が存在すること）
 
 ---
 
-## License
+## 注意事項
 
-[MIT](./LICENSE.txt)
+- テンプレートのマッチングは、EC-CUBE の各ディレクトリ内の Twig パスの末尾を正規化して行います。
+- コントローラーのソースコードに Twig パス文字列が含まれないカスタムレンダリングフローを使用している場合、自動解決できないことがあります。その場合は Quick Pick リストが表示されます。
+
+---
+
+## リポジトリ
+
+- GitHub: https://github.com/TakashiHishiki/ec-cube-controller-twig-navigator
+
+---
+
+## ライセンス
+
+MIT
