@@ -152,7 +152,7 @@ ext install colscenery.ec-cube-controller-twig-navigator
   Quick Pick 一覧に app/template/テンプレート名/Block/ 配下のファイルが表示されないようになりました。
 - **Esc キーによる新規ファイル作成（テンプレート参照あり）**  
   Quick Pick で Esc キーを押すと新規ファイル作成ウィザードが起動します。@Template や render() でテンプレートパスが指定されている場合、フォルダ名とファイル名はそのパスから自動決定されます。テンプレートディレクトリを選択して確認するだけで作成完了です。（例: @Template("Cart/test.twig") → app/template/MyTheme/Cart/test.twig）
-- **Esc キーによる新規ファイル作成（テンプレート参照なし）: **  
+- **Esc キーによる新規ファイル作成（テンプレート参照なし）:**
   テンプレートパスの参照がない場合は、テンプレートディレクトリ・サブフォルダを選択し、ファイル名を入力して作成します。
 
 ### 0.0.10
